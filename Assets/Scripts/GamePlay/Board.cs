@@ -6,6 +6,8 @@ public class Board : MonoBehaviour
     public Row[] rows { get; private set; }
     public int rowCount { get; private set; }
 
+    public Tile.TileState emptyState;
+
     private void Awake()
     {
         // Order children by number if they are not in order already
@@ -16,6 +18,12 @@ public class Board : MonoBehaviour
     public void Clear()
     {
         foreach (Row row in rows)
-            row.Clear();
+        {
+            foreach (Tile tile in row.tiles)
+            {
+                tile.Clear();
+                tile.SetState(emptyState);
+            }
+        }
     }
 }

@@ -40,10 +40,4 @@ public class Row : MonoBehaviour
         tiles[at].Clear();
         filledTileCount--;
     }
-
-    public void Clear()
-    {
-        foreach (Tile tile in tiles)
-            tile.Clear();
-    }
 }

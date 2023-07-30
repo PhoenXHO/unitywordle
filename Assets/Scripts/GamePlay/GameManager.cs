@@ -31,13 +31,16 @@ public class GameManager : MonoBehaviour
     private int currRow = 0, currTile = 0;
     private Tile activeTile;
 
+    private UIManager uiManager;
+
     private void Start()
     {
-        LoadData();
-        SelectRandomWord();
+        board.emptyState = emptyState;
 
-        activeTile = board.rows[0].tiles[0];
-        activeTile.SetState(activeState);
+        uiManager = GetComponent<UIManager>();
+
+        LoadData();
+        NewGame();
 
         enterIcon.gameObject.SetActive(false);
         gameStateText.gameObject.SetActive(false);
@@ -51,12 +54,30 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
-
+        if (gameStateText)
+            gameStateText.gameObject.SetActive(false);
     }
 
     private void OnDisable()
     {
-        gameStateText.gameObject.SetActive(true);
+        if (gameStateText)
+            gameStateText.gameObject.SetActive(true);
+    }
+
+    public void NewGame()
+    {
+        Debug.Log("Starting a new game...");
+
+        uiManager.SetMenuInactive();
+        enabled = true;
+
+        board.Clear();
+
+        currTile = currRow = 0;
+        activeTile = board.rows[currRow].tiles[currTile];
+        HighlightCurrentTile();
+
+        SelectRandomWord();
     }
 
     private void HandleUserInput()
@@ -156,12 +177,19 @@ public class GameManager : MonoBehaviour
             gameStateText.text = winText;
             gameStateText.color = winColor;
             enabled = false;
+
+            uiManager.SetGameState(true);
+            uiManager.SetMenuActive();
         }
         else if (currRow + 1 >= board.rowCount)
         {
             gameStateText.text = loseText;
             gameStateText.color = loseColor;
             enabled = false;
+
+            uiManager.SetGameState(false);
+            uiManager.SetMenuActive();
+            uiManager.SetWordLabel(currWord.ToUpper());
         }
     }
 
