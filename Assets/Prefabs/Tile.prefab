@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8128740531348518350}
   - component: {fileID: 6283764294835541908}
   - component: {fileID: 1287657551022405058}
+  - component: {fileID: 2165860276781245665}
   m_Layer: 5
   m_Name: Tile
   m_TagString: Untagged
@@ -61,7 +62,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: e4456988768753948b7745b6ad0c9a82, type: 2}
   m_Color: {r: 0.105882354, g: 0.10980392, b: 0.11372549, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -106,6 +107,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c21f5189b6f63984c909d00ac9de3071, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &2165860276781245665
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4915837493412166489}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c8bd90ac8a1fef1429cfd98b4dc17caa, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4944630759327363475
 GameObject:
   m_ObjectHideFlags: 0

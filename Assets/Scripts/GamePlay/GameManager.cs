@@ -30,15 +30,18 @@ public class GameManager : MonoBehaviour
     private string currWord;
     private int currRow = 0, currTile = 0;
     private Tile activeTile;
+    private Animator activeTileAnimator;
 
     private UIManager uiManager;
 
-    private void Start()
+    private void Awake()
     {
         board.emptyState = emptyState;
-
         uiManager = GetComponent<UIManager>();
+    }
 
+    private void Start()
+    {
         LoadData();
         NewGame();
 
@@ -75,9 +78,11 @@ public class GameManager : MonoBehaviour
 
         currTile = currRow = 0;
         activeTile = board.rows[currRow].tiles[currTile];
+        activeTileAnimator = activeTile.GetComponent<Animator>();
         HighlightCurrentTile();
 
         SelectRandomWord();
+        Debug.Log("Chosen word : " + currWord);
     }
 
     private void HandleUserInput()
@@ -138,14 +143,17 @@ public class GameManager : MonoBehaviour
         int i = 0;
         foreach (Tile tile in board.rows[currRow].tiles)
         {
+            // First check
+            // Check the correct and incorrect tiles
             if (currWord[i] == tile.letter)
             {
-                tile.SetState(correctState);
+                board.rows[currRow].correctTileCount++;
+                StartCoroutine(tile.SetState(correctState, i * 0.1f, true));
                 remaining = remaining.Replace(' ', i);
             }
             else if (!currWord.Contains(tile.letter))
             {
-                tile.SetState(incorrectState);
+                StartCoroutine(tile.SetState(incorrectState, i * 0.1f, true));
             }
 
             i++;
@@ -154,18 +162,22 @@ public class GameManager : MonoBehaviour
         i = 0;
         foreach (Tile tile in board.rows[currRow].tiles)
         {
+            // Second check
+            // Go through again to avoid counting the same letter twice
             if (tile.state != correctState && tile.state != incorrectState)
             {
                 if (remaining.Contains(tile.letter))
                 {
-                    tile.SetState(wrongSpotState);
+                    board.rows[currRow].wrongSpotTileCount++;
+
+                    StartCoroutine(tile.SetState(wrongSpotState, i * 0.1f, true));
 
                     int index = remaining.IndexOf(tile.letter);
                     remaining = remaining.Replace(' ', index);
                 }
                 else
                 {
-                    tile.SetState(incorrectState);
+                    StartCoroutine(tile.SetState(incorrectState, i * 0.1f, true));
                 }
             }
 
@@ -178,8 +190,8 @@ public class GameManager : MonoBehaviour
             gameStateText.color = winColor;
             enabled = false;
 
-            uiManager.SetGameState(true);
-            uiManager.SetMenuActive();
+            uiManager.SetGameState(UIManager.GameState.Win);
+            StartCoroutine(uiManager.SetMenuActive());
         }
         else if (currRow + 1 >= board.rowCount)
         {
@@ -187,9 +199,16 @@ public class GameManager : MonoBehaviour
             gameStateText.color = loseColor;
             enabled = false;
 
-            uiManager.SetGameState(false);
-            uiManager.SetMenuActive();
+            // It is almost a win if the player gets exactly 4 correct letters
+            // or if they get at least 2 correct letters and 2 letters in the wrong spot
+            if (board.rows[currRow].correctTileCount == 4 ||
+                (board.rows[currRow].correctTileCount >= 2 && board.rows[currRow].wrongSpotTileCount >= 2))
+                uiManager.SetGameState(UIManager.GameState.Almost);
+            else
+                uiManager.SetGameState(UIManager.GameState.Lose);
+
             uiManager.SetWordLabel(currWord.ToUpper());
+            StartCoroutine(uiManager.SetMenuActive());
         }
     }
 
@@ -209,13 +228,19 @@ public class GameManager : MonoBehaviour
     private void HighlightCurrentTile()
     {
         if (activeTile.state == activeState)
-            activeTile.SetState(emptyState);
+        {
+            StartCoroutine(activeTile.SetState(emptyState));
+            activeTileAnimator.SetBool("Highlighted", false);
+        }
 
         if (0 <= currRow && currRow < board.rowCount &&
             0 <= currTile && currTile < board.rows[currRow].tileCount)
         {
             activeTile = board.rows[currRow].tiles[currTile];
-            activeTile.SetState(activeState);
+            StartCoroutine(activeTile.SetState(activeState));
+
+            activeTileAnimator = activeTile.GetComponent<Animator>();
+            activeTileAnimator.SetBool("Highlighted", true);
         }
     }
 
@@ -227,11 +252,10 @@ public class GameManager : MonoBehaviour
         {
             RectTransform row = board.rows[currRow].rectTransform;
 
-            float xPos = row.sizeDelta.x / 2 + row.position.x + xOffset;
-            float yPos = row.position.y;
+            float xPos = row.sizeDelta.x / 2 + row.anchoredPosition.x + xOffset;
+            float yPos = row.anchoredPosition.y;
 
-            enterIcon.position = new Vector2(xPos, yPos);
-
+            enterIcon.anchoredPosition = new Vector2(xPos, yPos);
             enterIcon.gameObject.SetActive(true);
         }
         else

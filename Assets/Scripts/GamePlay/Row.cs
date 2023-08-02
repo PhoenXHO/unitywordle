@@ -6,6 +6,8 @@ public class Row : MonoBehaviour
     public Tile[] tiles { get; private set; }
     public int tileCount { get; private set; }
     public int filledTileCount { get; private set; }
+    public int correctTileCount;
+    public int wrongSpotTileCount;
 
     public RectTransform rectTransform { get; private set; }
 

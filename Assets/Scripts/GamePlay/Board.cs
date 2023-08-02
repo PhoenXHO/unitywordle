@@ -22,7 +22,7 @@ public class Board : MonoBehaviour
             foreach (Tile tile in row.tiles)
             {
                 tile.Clear();
-                tile.SetState(emptyState);
+                StartCoroutine(tile.SetState(emptyState));
             }
         }
     }
